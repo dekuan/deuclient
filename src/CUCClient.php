@@ -1,6 +1,6 @@
 <?php
 
-namespace dekuan\xsuclient;
+namespace dekuan\deuclient;
 
 use dekuan\delib\CLib;
 

@@ -1,5 +1,5 @@
-<a href="testxsuclient.php">testxsuclient.php</a>
+<a href="testdeuclient.php">testdeuclient.php</a>
 <br />
 
-<a href="testxsuclient_logout.php">testxsuclient_logout.php</a>
+<a href="testdeuclient_logout.php">testdeuclient_logout.php</a>
 <br />

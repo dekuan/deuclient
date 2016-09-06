@@ -19,9 +19,9 @@ ob_start();
 require_once( dirname( __DIR__ ) . "/vendor/autoload.php" );
 require_once( dirname( __DIR__ ) . "/src/CUCClient.php" );
 require_once( dirname( __DIR__ ) . "/src/CUCSession.php" );
-require_once( dirname( __DIR__ ) . "/vendor/xscn/xslib/src/CLib.php" );
+require_once( dirname( __DIR__ ) . "/vendor/dekuan/delib/src/CLib.php" );
 
-use xscn\xsuclient as ucli;
+use dekuan\deuclient as ucli;
 
 
 

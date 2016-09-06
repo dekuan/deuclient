@@ -1,16 +1,16 @@
 <?php
 
-require_once( __DIR__ . '/xsuclient/src/CUCClient.php' );
-require_once( __DIR__ . '/xsuclient/src/CUCSession.php' );
+require_once( __DIR__ . '/deuclient/src/CUCClient.php' );
+require_once( __DIR__ . '/deuclient/src/CUCSession.php' );
 
-use xscn\xsuclient as ucli;
-
-
-
-testxsuclient_main();
+use dekuan\deuclient as ucli;
 
 
-function testxsuclient_main()
+
+testdeuclient_main();
+
+
+function testdeuclient_main()
 {
 	$cUCli	= ucli\CUCClient::getInstance();
 
