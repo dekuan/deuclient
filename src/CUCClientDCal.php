@@ -45,6 +45,11 @@ class CUCClientDCal
 
 
 	//
+	//	versions
+	//
+	const COOKIE_VERSION            = "1010";
+
+	//
 	//	default values
 	//
 	const DEFAULT_DOMAIN            = '.dekuan.org';
@@ -66,25 +71,25 @@ class CUCClientDCal
 	//
 	protected $m_arrCfg	= [];
 
-	//
-	protected $m_arrSupportedLangList =
+	//	supported languages
+	protected $m_arrSupportedLang =
 	[
-		'usa'	=> [ 0 => 'United States',	1 => 'English',		'deftz' => 'timezone_america_new_york',	'ua' => [ 'en', 'en-us' ] ],
-		'kor'	=> [ 0 => '대한민국',		1 => '한국어',		'deftz' => 'timezone_asia_seoul',	'ua' => [ 'ko' ]  ],
-		'jpn'	=> [ 0 => '日本',		1 => '日本語',		'deftz' => 'timezone_asia_tokyo',	'ua' => [ 'ja' ] ],
-		//	'fra'	=> [ 0 => 'France',	1 => 'Français',	'deftz' => '',				'ua' => [ 'fr', 'fr-be', 'fr-ch', 'fr-ca', 'fr-lu' ] ],
-		'chs'	=> [ 0 => '中国大陆',		1 => '简体中文',	'deftz' => 'timezone_asia_shanghai',	'ua' => [ 'zh-cn', 'zh' ] ],
-		//	'zhh'	=> [ 0 => '中國香港',	1 => '繁體中文',	'deftz' => 'timezone_asia_hong_kong',	'ua' => [ 'zh-hk', 'zh-sg' ] ],
-		'cht'	=> [ 0 => '中華臺灣',		1 => '繁體中文',	'deftz' => 'timezone_asia_taipei',	'ua' => [ 'zh-tw', 'zh-hk', 'zh-sg' ] ],
+		'usa'	=> [ 'ua' => [ 'en', 'en-us' ] ],
+		'kor'	=> [ 'ua' => [ 'ko' ]  ],
+		'jpn'	=> [ 'ua' => [ 'ja' ] ],
+		//	'fra'	=> [ 'ua' => [ 'fr', 'fr-be', 'fr-ch', 'fr-ca', 'fr-lu' ] ],
+		'chs'	=> [ 'ua' => [ 'zh-cn', 'zh' ] ],
+		//	'zhh'	=> [ 'ua' => [ 'zh-hk', 'zh-sg' ] ],
+		'cht'	=> [ 'ua' => [ 'zh-tw', 'zh-hk', 'zh-sg' ] ],
 
-		//	'deu'	=> [ 0 => 'Deutschland',	1 => 'Deutsch',		'deftz' => '', 'ua' => Array( 'de', 'de-ch', 'de-at', 'de-lu', 'de-li' ) ],
-		//	'ita'	=> [ 0 => 'Italia',	1 => 'Italiano',	'deftz' => '', 'ua' => Array( 'it', 'it-ch' ) ],
-		//	'esn'	=> [ 0 => 'España',	1 => 'Español',		'deftz' => '', 'ua' => Array( 'es', 'es-mx', 'es-cr', 'es-do', 'es-co', 'es-ar', 'es-cl', 'es-py', 'es-sv', 'es-ni', 'es-gt', 'es-pa', 'es-ve', 'es-pe', 'es-ec', 'es-uy', 'es-bo', 'es-hn', 'es-pr' ) ],
-		//	'ptg'	=> [ 0 => 'Brasil',	1 => 'Português',	'deftz' => '', 'ua' => Array( 'pt' ) ],
-		//	'plk'	=> [ 0 => 'Polska',	1 => 'Polski',		'deftz' => '', 'ua' => Array( 'pl' ) ],
-		//	'vit'	=> [ 0 => 'Vietnam',	1 => 'Việt Nam',	'deftz' => '', 'ua' => Array( 'vi' ) ],
-		//	'tha'	=> [ 0 => 'ประเทศไทย',	1 => 'ภาษาไทย',		'deftz' => '', 'ua' => Array( 'th' ) ],
-		//	'rus'	=> [ 0 => 'Россия',	1 => 'Русский',		'deftz' => '', 'ua' => Array( 'ru', 'ru-mo' ) ],
+		//	'deu'	=> [ 'ua' => Array( 'de', 'de-ch', 'de-at', 'de-lu', 'de-li' ) ],
+		//	'ita'	=> [ 'ua' => Array( 'it', 'it-ch' ) ],
+		//	'esn'	=> [ 'ua' => Array( 'es', 'es-mx', 'es-cr', 'es-do', 'es-co', 'es-ar', 'es-cl', 'es-py', 'es-sv', 'es-ni', 'es-gt', 'es-pa', 'es-ve', 'es-pe', 'es-ec', 'es-uy', 'es-bo', 'es-hn', 'es-pr' ) ],
+		//	'ptg'	=> [ 'ua' => Array( 'pt' ) ],
+		//	'plk'	=> [ 'ua' => Array( 'pl' ) ],
+		//	'vit'	=> [ 'ua' => Array( 'vi' ) ],
+		//	'tha'	=> [ 'ua' => Array( 'th' ) ],
+		//	'rus'	=> [ 'ua' => Array( 'ru', 'ru-mo' ) ],
 	];
 
 	//	...
@@ -204,6 +209,113 @@ class CUCClientDCal
 		}
 	}
 
+	public function MakeLogin( $arrUser )
+	{
+		if ( ! CLib::IsArrayWithKeys( $arrUser ) )
+		{
+			return false;
+		}
+
+		//	...
+		$bRet = false;
+
+		//	...
+		$nLoginTime	= time();
+
+		//
+		//	host id and table id for storaging calendar data
+		//
+		$nHostId	= CLib::GetValEx( $arrUser, 'hostid', CLib::VARTYPE_NUMERIC, 0 );
+		$nTableId	= CLib::GetValEx( $arrUser, 'tableid', CLib::VARTYPE_NUMERIC, 0 );
+
+		//	...
+		$sUMid		= CLib::GetValEx( $arrUser, 'u_mid', CLib::VARTYPE_STRING, '' );
+		$nUAction	= CLib::GetValEx( $arrUser, 'u_action', CLib::VARTYPE_NUMERIC, 0 );
+
+		$sUFullName	= CLib::GetValEx( $arrUser, 'u_fullname', CLib::VARTYPE_STRING, '' );
+		$sUImg		= CLib::GetValEx( $arrUser, 'u_img', CLib::VARTYPE_STRING, '' );
+		$sUSkin		= CLib::GetValEx( $arrUser, 'u_skin', CLib::VARTYPE_STRING, '' );
+
+		//	keep alive, the default value is 0
+		//		1 identify the session will keep alive for ever.
+		//		0 identify the session will be timeout after limited time
+		$bKeepAlive	= false;
+		if ( is_array( $arrUser ) && array_key_exists( 'u_keepalive', $arrUser ) )
+		{
+			if ( is_numeric( $arrUser[ 'u_keepalive' ] ) )
+			{
+				$bKeepAlive	= intval( $arrUser[ 'u_keepalive' ] );
+				$bKeepAlive	= ( 0 == $arrUser[ 'u_keepalive' ] ? false : true );
+			}
+			else if ( is_bool( $arrUser[ 'u_keepalive' ] ) )
+			{
+				$bKeepAlive = boolval( $arrUser[ 'u_keepalive' ] );
+			}
+			else if ( is_string( $arrUser[ 'u_keepalive' ] ) )
+			{
+				if ( ! empty( $arrUser[ 'u_keepalive' ] ) )
+				{
+					$bKeepAlive = true;
+				}
+			}
+		}
+
+		//
+		//	sync server id
+		//
+		//	10	_CONST_SYNCSRV_LOCATION_CHINA		//	locate in China
+		//	11	_CONST_SYNCSRV_LOCATION_HONGKONG	//	locate in Hongkong
+		//	12	_CONST_SYNCSRV_LOCATION_AMERICA		//	locate in America
+		//	13	_CONST_SYNCSRV_LOCATION_KOREA		//	locate in Korea
+		//	14	_CONST_SYNCSRV_LOCATION_JAPAN		//	locate in Japan
+		//	15	_CONST_SYNCSRV_LOCATION_TAIWAN		//	locate in Taiwan
+		//
+		$nSyncSrv	= CLib::GetValEx( $arrUser, 'sync_srv', CLib::VARTYPE_NUMERIC, 0 );
+
+
+		if ( $nHostId >= 0 && $nTableId >= 0 && strlen( $sUMid ) >= 32 &&
+			$nSyncSrv >= 10 )
+		{
+			//
+			//	generate signatures
+			//
+			$sSign		= $this->GetSignData( self::COOKIE_VERSION, $nLoginTime, $nHostId, $nTableId, $sUMid, $nUAction );
+			$sCRC		= $this->GetCRCData( self::COOKIE_VERSION, $nLoginTime, $nHostId, $nTableId, $sUMid, $nUAction );
+
+			//
+			//	set cookies
+			//
+			$arrCookieData = Array
+			(
+				self::CK_VER		=> self::COOKIE_VERSION,
+				self::CK_HID		=> intval( $nHostId ),
+				self::CK_TID		=> intval( $nTableId ),
+				self::CK_UMID		=> $sUMid,
+				self::CK_UFULLNAME	=> $sUFullName,
+				self::CK_UIMG		=> $sUImg,
+				self::CK_UACTION	=> intval( $nUAction ),
+				self::CK_CLOGINTIME	=> intval( $nLoginTime ),
+				self::CK_CSIGNATURE	=> $sSign,
+				self::CK_CCRC		=> intval( $sCRC ),
+				self::CK_CKEEPALIVE	=> ( $bKeepAlive ? 1 : 0 ),
+				self::CK_ESKIN		=> $sUSkin,
+				self::CK_ESYNCSRV	=> $nSyncSrv,
+			);
+			$this->SetDataToCookie( $arrCookieData, $bKeepAlive );
+			$this->UpdateCookieArray();
+
+			//	...
+			$bRet = true;
+		}
+
+		//	...
+		return $bRet;
+	}
+
+
+	//
+	//	obtain data into array from _COOKIE
+	//
 	public function GetCookieArray()
 	{
 		$ArrSafeCk = Array
@@ -386,7 +498,7 @@ class CUCClientDCal
 			return false;
 		}
 
-		return array_key_exists( $sLang, $this->m_arrSupportedLangList );
+		return array_key_exists( $sLang, $this->m_arrSupportedLang );
 	}
 	public function SetUserLang( $sUserLang, $bSaveToCookie = false )
 	{
@@ -477,9 +589,10 @@ class CUCClientDCal
 
 		if ( CLib::IsArrayWithKeys( $ArrBAcptLangs ) )
 		{
-			foreach ( $this->m_arrSupportedLangList as $sCode => $Arr )
+			foreach ( $this->m_arrSupportedLang as $sCode => $Arr )
 			{
-				if ( array_key_exists( 'ua', $Arr ) && is_array( $Arr['ua'] ) )
+				if ( array_key_exists( 'ua', $Arr ) &&
+					is_array( $Arr['ua'] ) )
 				{
 					foreach ( $Arr['ua'] as $item )
 					{
