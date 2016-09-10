@@ -49,9 +49,9 @@ class CUCClient
 	//
 	//	default values
 	//
-	const DEFAULT_DOMAIN            = '.xs.cn';
+	const DEFAULT_DOMAIN            = '.dekuan.org';
 	const DEFAULT_PATH	        = '/';
-	const DEFAULT_SIGN_SEED	        = '03abafc5-2f15-46ea-bc1f-51805f380f04/7b2331cb-6a5c-4a27-a9ab-25e13359274c';
+	const DEFAULT_SIGN_SEED	        = '03abafc5ssss-2f15-66ea-bc1f-51805f380f06/9b2331cb-8a9c-4a29-a9ab-25e13359279c';
 	const DEFAULT_SECURE	        = false;	//	cookie should only be transmitted over a secure HTTPS connection from the client
 	const DEFAULT_HTTPONLY	        = true;		//	cookie will be made accessible only through the HTTP protocol
 
