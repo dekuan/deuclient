@@ -56,35 +56,36 @@ class CUCClientDCal
 	const DEFAULT_LANG_NAME		= 'usa';	//	default language name
 
 
+	//
 	//	member vars
+	//
 	var $m_ArrCk		= Array();
 
 	//
 	//	configuration
 	//
-	protected $m_arrCfg	= Array();
+	protected $m_arrCfg	= [];
 
 	//
-	protected $m_arrSupportedLangList	= Array
-	(
-		'usa'	=> Array( 0 => 'United States',	1 => 'English',		'deftz' => 'timezone_america_new_york',	'ua' => Array( 'en', 'en-us' ) ),
-		'kor'	=> Array( 0 => '대한민국',		1 => '한국어',		'deftz' => 'timezone_asia_seoul',	'ua' => Array( 'ko' )  ),
-		'jpn'	=> Array( 0 => '日本',		1 => '日本語',		'deftz' => 'timezone_asia_tokyo',	'ua' => Array( 'ja' ) ),
-		//	'fra'	=> Array( 0 => 'France',	1 => 'Français',	'deftz' => '',				'ua' => Array( 'fr', 'fr-be', 'fr-ch', 'fr-ca', 'fr-lu' ) ),
-		'chs'	=> Array( 0 => '中国大陆',	1 => '简体中文',	'deftz' => 'timezone_asia_shanghai',	'ua' => Array( 'zh-cn', 'zh' ) ),
-		//	'zhh'	=> Array( 0 => '中國香港',	1 => '繁體中文',	'deftz' => 'timezone_asia_hong_kong',	'ua' => Array( 'zh-hk', 'zh-sg' ) ),
-		'cht'	=> Array( 0 => '中華臺灣',	1 => '繁體中文',	'deftz' => 'timezone_asia_taipei',	'ua' => Array( 'zh-tw', 'zh-hk', 'zh-sg' ) ),
+	protected $m_arrSupportedLangList =
+	[
+		'usa'	=> [ 0 => 'United States',	1 => 'English',		'deftz' => 'timezone_america_new_york',	'ua' => [ 'en', 'en-us' ] ],
+		'kor'	=> [ 0 => '대한민국',		1 => '한국어',		'deftz' => 'timezone_asia_seoul',	'ua' => [ 'ko' ]  ],
+		'jpn'	=> [ 0 => '日本',		1 => '日本語',		'deftz' => 'timezone_asia_tokyo',	'ua' => [ 'ja' ] ],
+		//	'fra'	=> [ 0 => 'France',	1 => 'Français',	'deftz' => '',				'ua' => [ 'fr', 'fr-be', 'fr-ch', 'fr-ca', 'fr-lu' ] ],
+		'chs'	=> [ 0 => '中国大陆',		1 => '简体中文',	'deftz' => 'timezone_asia_shanghai',	'ua' => [ 'zh-cn', 'zh' ] ],
+		//	'zhh'	=> [ 0 => '中國香港',	1 => '繁體中文',	'deftz' => 'timezone_asia_hong_kong',	'ua' => [ 'zh-hk', 'zh-sg' ] ],
+		'cht'	=> [ 0 => '中華臺灣',		1 => '繁體中文',	'deftz' => 'timezone_asia_taipei',	'ua' => [ 'zh-tw', 'zh-hk', 'zh-sg' ] ],
 
-
-		//	'deu'	=> Array( 0 => 'Deutschland',	1 => 'Deutsch',		'deftz' => '', 'ua' => Array( 'de', 'de-ch', 'de-at', 'de-lu', 'de-li' ) ),
-		//	'ita'	=> Array( 0 => 'Italia',	1 => 'Italiano',	'deftz' => '', 'ua' => Array( 'it', 'it-ch' ) ),
-		//	'esn'	=> Array( 0 => 'España',	1 => 'Español',		'deftz' => '', 'ua' => Array( 'es', 'es-mx', 'es-cr', 'es-do', 'es-co', 'es-ar', 'es-cl', 'es-py', 'es-sv', 'es-ni', 'es-gt', 'es-pa', 'es-ve', 'es-pe', 'es-ec', 'es-uy', 'es-bo', 'es-hn', 'es-pr' ) ),
-		//	'ptg'	=> Array( 0 => 'Brasil',	1 => 'Português',	'deftz' => '', 'ua' => Array( 'pt' ) ),
-		//	'plk'	=> Array( 0 => 'Polska',	1 => 'Polski',		'deftz' => '', 'ua' => Array( 'pl' ) ),
-		//	'vit'	=> Array( 0 => 'Vietnam',	1 => 'Việt Nam',	'deftz' => '', 'ua' => Array( 'vi' ) ),
-		//	'tha'	=> Array( 0 => 'ประเทศไทย',	1 => 'ภาษาไทย',		'deftz' => '', 'ua' => Array( 'th' ) ),
-		//	'rus'	=> Array( 0 => 'Россия',	1 => 'Русский',		'deftz' => '', 'ua' => Array( 'ru', 'ru-mo' ) ),
-	);
+		//	'deu'	=> [ 0 => 'Deutschland',	1 => 'Deutsch',		'deftz' => '', 'ua' => Array( 'de', 'de-ch', 'de-at', 'de-lu', 'de-li' ) ],
+		//	'ita'	=> [ 0 => 'Italia',	1 => 'Italiano',	'deftz' => '', 'ua' => Array( 'it', 'it-ch' ) ],
+		//	'esn'	=> [ 0 => 'España',	1 => 'Español',		'deftz' => '', 'ua' => Array( 'es', 'es-mx', 'es-cr', 'es-do', 'es-co', 'es-ar', 'es-cl', 'es-py', 'es-sv', 'es-ni', 'es-gt', 'es-pa', 'es-ve', 'es-pe', 'es-ec', 'es-uy', 'es-bo', 'es-hn', 'es-pr' ) ],
+		//	'ptg'	=> [ 0 => 'Brasil',	1 => 'Português',	'deftz' => '', 'ua' => Array( 'pt' ) ],
+		//	'plk'	=> [ 0 => 'Polska',	1 => 'Polski',		'deftz' => '', 'ua' => Array( 'pl' ) ],
+		//	'vit'	=> [ 0 => 'Vietnam',	1 => 'Việt Nam',	'deftz' => '', 'ua' => Array( 'vi' ) ],
+		//	'tha'	=> [ 0 => 'ประเทศไทย',	1 => 'ภาษาไทย',		'deftz' => '', 'ua' => Array( 'th' ) ],
+		//	'rus'	=> [ 0 => 'Россия',	1 => 'Русский',		'deftz' => '', 'ua' => Array( 'ru', 'ru-mo' ) ],
+	];
 
 	//	...
 	var $m_bIsLogin		= -1;
@@ -133,7 +134,8 @@ class CUCClientDCal
 	}
 	public function SetConfig( $sKey, $vValue )
 	{
-		if ( CLib::IsExistingString( $sKey ) && array_key_exists( $sKey, $this->m_arrCfg ) )
+		if ( CLib::IsExistingString( $sKey ) &&
+			array_key_exists( $sKey, $this->m_arrCfg ) )
 		{
 			$this->m_arrCfg[ $sKey ] = $vValue;
 			return true;
@@ -239,7 +241,7 @@ class CUCClientDCal
 	}
 	public function SetCookieArrayWithArray( $arrCookie )
 	{
-		if ( ! is_array( $arrCookie ) || 0 == count( $arrCookie ) )
+		if ( ! CLib::IsArrayWithKeys( $arrCookie ) )
 		{
 			return false;
 		}
@@ -253,6 +255,15 @@ class CUCClientDCal
 	}
 	public function SetCookieArray( $sKey, $sVal )
 	{
+		if ( ! CLib::IsExistingString( $sKey ) )
+		{
+			return false;
+		}
+		if ( ! CLib::IsExistingString( $sVal ) || ! is_numeric( $sVal ) )
+		{
+			return false;
+		}
+
 		$bRet	= false;
 		$sKey	= strtolower( trim( $sKey ) );
 		if ( ! empty( $sKey ) )
@@ -354,16 +365,43 @@ class CUCClientDCal
 
 		//	verify
 		$sRet = strtolower( trim( $sRet ) );
+		if ( ! $this->IsSupportedLang( $sRet ) )
+		{
+			$sRet = "usa";
+		}
 
 		return $sRet;
 	}
+	public function IsSupportedLang( $sLang )
+	{
+		if ( ! CLib::IsExistingString( $sLang ) )
+		{
+			return false;
+		}
+
+		//	...
+		$sLang = strtolower( trim( $sLang ) );
+		if ( empty( $sLang ) )
+		{
+			return false;
+		}
+
+		return array_key_exists( $sLang, $this->m_arrSupportedLangList );
+	}
 	public function SetUserLang( $sUserLang, $bSaveToCookie = false )
 	{
+		if ( ! CLib::IsExistingString( $sUserLang ) || ! is_bool( $bSaveToCookie ) )
+		{
+			return false;
+		}
+
 		$this->m_ArrCk[ self::CK_ELANG ] = trim( $sUserLang );
 		if ( $bSaveToCookie )
 		{
 			$this->_SetCookieByName( self::CK_ELANG, trim( $sUserLang ), true );
 		}
+
+		return true;
 	}
 
 	public function GetUserSkin()
@@ -372,14 +410,20 @@ class CUCClientDCal
 	}
 	public function SetUserSkin( $sUserSkin )
 	{
+		if ( ! CLib::IsExistingString( $sUserSkin ) )
+		{
+			return false;
+		}
+
 		$this->m_ArrCk[ self::CK_ESKIN ] = trim( $sUserSkin );
+		return true;
 	}
 
 
 	//	get signature
 	public function GetSignData( $sCkVer, $nLoginTime, $nCkHId, $nCkTId, $nCkUMId, $sCkUAction )
 	{
-		$sString	= $sCkVer . "-" .
+		$sString = $sCkVer . "-" .
 			strval( $nLoginTime ) . "-" .
 			strval( $nCkHId ) . "-" .
 			strval( $nCkTId ) . "-" .
