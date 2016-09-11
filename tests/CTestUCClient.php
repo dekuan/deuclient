@@ -31,7 +31,7 @@ use dekuan\deuclient as ucli;
  */
 class CTestUCClient extends PHPUnit_Framework_TestCase
 {
-	const CONST_SEED	= '5adf23adb-8815-46ea-ees1f-198sdcsf380f04/83221234cb-5af5c-1234f-88acd-12348sdsda2sdf';
+	const CONST_SEED	= '5adf23adb-8815-46ea-ees1f-198sdcsf380f04/dfdfdfdfdf-5af5c-1234f-88acd-1121134234343434343';
 
 
 	/**
