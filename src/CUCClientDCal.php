@@ -98,7 +98,7 @@ class CUCClientDCal
 
 	public function __construct()
 	{
-		$this->m_ArrCk	= $this->GetCookieArray();
+		$this->m_ArrCk	= $this->InitCookieArray();
 		$this->m_arrCfg	=
 		[
 			self::CFGKEY_DOMAIN	=> self::DEFAULT_DOMAIN,
@@ -316,7 +316,7 @@ class CUCClientDCal
 	//
 	//	obtain data into array from _COOKIE
 	//
-	public function GetCookieArray()
+	public function InitCookieArray()
 	{
 		$ArrSafeCk = Array
 		(
@@ -349,7 +349,7 @@ class CUCClientDCal
 	}
 	public function UpdateCookieArray()
 	{
-		$this->GetCookieArray();
+		$this->InitCookieArray();
 	}
 	public function SetCookieArrayWithArray( $arrCookie )
 	{
@@ -393,7 +393,7 @@ class CUCClientDCal
 	}
 	public function GetCookieString()
 	{
-		$ArrCookie = $this->GetCookieArray();
+		$ArrCookie = $this->InitCookieArray();
 		foreach ( $ArrCookie as $sKey => $sVal )
 		{
 			if ( 0 == strlen( $sVal ) )

@@ -17,11 +17,11 @@ ob_start();
 
 
 require_once( dirname( __DIR__ ) . "/vendor/autoload.php" );
-require_once( dirname( __DIR__ ) . "/src/CUCClient.php" );
+require_once( dirname( __DIR__ ) . "/src/CUCClientDCal.php" );
 require_once( dirname( __DIR__ ) . "/src/CUCSession.php" );
 require_once( dirname( __DIR__ ) . "/vendor/dekuan/delib/src/CLib.php" );
 
-use dekuan\deuclient as ucli;
+use dekuan\deuclient\CUCClientDCal;
 
 
 
@@ -35,6 +35,34 @@ class CTestUCClientDCal extends PHPUnit_Framework_TestCase
 {
 	public function testForIsLogin()
 	{
-		
+		$cCUCClientDCal	= new CUCClientDCal();
+
+		$cCUCClientDCal->SetConfig( CUCClientDCal::CFGKEY_DOMAIN,	'.desktopcal.com' );
+		$cCUCClientDCal->SetConfig( CUCClientDCal::CFGKEY_SEED,		'desktopcadccxxx9nb' );
+
+		$_COOKIE	=
+		[
+			'dcelang'	=> 'usa',
+			'dcver'		=> 1010,
+			'dchid'		=> 1,
+			'dctid'		=> 1,
+			'dcumid'	=> '101115adc205e3cc47cecddd187a54b30a06e3',
+			'dcufnm'	=> '%E5%88%98%E5%85%B6%E6%98%9F',
+			'dcuac'		=> 3,
+			'dcclt'		=> 1473426626,
+			'dccsn'		=> 'e40bc6c2fc9e9100d76616a0ce3476f1',
+			'dccrc'		=> 1602249063,
+			'dcckl'		=> 1,
+			'dcesk'		=> 'default',
+			'dcesyncsrv'	=> 12
+		];
+
+		$cCUCClientDCal->InitCookieArray();
+		$bIsLoggedIn	= $cCUCClientDCal->IsLogin();
+
+		echo "\r\n";
+		printf( "testForIsLogin :: Is Logged in = %s ", $bIsLoggedIn ? "TRUE" : "FALSE" );
+		echo "\r\n";
+
 	}
 }
