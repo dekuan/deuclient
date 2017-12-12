@@ -670,7 +670,7 @@ class CUCClientPro
                 {
                         return $vDefault;
                 }
-                if ( ! $sKey || empty( $sKey ) )
+                if ( ! CLib::IsExistingString( $sKey ) )
                 {
                         return $vDefault;
                 }
@@ -710,14 +710,16 @@ class CUCClientPro
 					if ( array_key_exists( self::CKX_MID, $arrCk[ self::CKX ] ) &&
 						array_key_exists( self::CKX_TYPE, $arrCk[ self::CKX ] ) &&
 						array_key_exists( self::CKX_STATUS, $arrCk[ self::CKX ] ) &&
-						array_key_exists( self::CKX_ACTION, $arrCk[ self::CKX ] ) &&
-						array_key_exists( self::CKT_VER, $arrCk[ self::CKT ] ) &&
-						array_key_exists( self::CKT_LOGIN_TM, $arrCk[ self::CKT ] ) &&
-						array_key_exists( self::CKT_REFRESH_TM, $arrCk[ self::CKT ] ) &&
-						array_key_exists( self::CKT_UPDATE_TM, $arrCk[ self::CKT ] ) &&
-						array_key_exists( self::CKT_KP_ALIVE, $arrCk[ self::CKT ] ) )
+						array_key_exists( self::CKX_ACTION, $arrCk[ self::CKX ] ) )
 					{
-						$bRet = true;
+						if ( array_key_exists( self::CKT_VER, $arrCk[ self::CKT ] ) &&
+							array_key_exists( self::CKT_LOGIN_TM, $arrCk[ self::CKT ] ) &&
+							array_key_exists( self::CKT_REFRESH_TM, $arrCk[ self::CKT ] ) &&
+							array_key_exists( self::CKT_UPDATE_TM, $arrCk[ self::CKT ] ) &&
+							array_key_exists( self::CKT_KP_ALIVE, $arrCk[ self::CKT ] ) )
+						{
+							$bRet = true;	
+						}
 					}
 				}
 			}
