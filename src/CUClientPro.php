@@ -6,9 +6,9 @@ use dekuan\delib\CLib;
 
 
 /**
- *	CUCClientPro
+ *	CUClientPro
  */
-class CUCClientPro
+class CUClientPro
 {
 	//	statics instance
 	protected static $g_cStaticInstance;
@@ -98,7 +98,7 @@ class CUCClientPro
 	//
 	//	cookie information
 	//
-	const COOKIE_VERSION            = '1.0.3.1003';
+	const COOKIE_VERSION            = '1.0.1.1000';
 
 	
 	//
@@ -176,134 +176,20 @@ class CUCClientPro
         //
         //	make user login
         //
-        public function MakeLogin( $arrData, $bKeepAlive = false, & $sCkString = '' )
+        public function MakeLogin( $vData, $bKeepAlive = false, & $sCkString = '' )
         {
-                //
-                //	arrData		- [in] Array
-                //	(
-                //		'X'	=> Array
-                //		(
-                //			'mid'		=> '101101aaefe12342aaefe12342aaefe12342',
-                //			'nkn'		=> '',
-                //			't'		=> 0,
-                //			'imgid'		=> '',
-                //			'act'		=> 0,
-                //			'src'		=> '',
-                //			'digest'	=> '',
-                //		)
-                //		'T'	=> Array
-                //		(
-                //			'v'		=> '',
-                //			'ltm'		=> 0,
-                //			'rtm'		=> 0,
-                //			'utm'		=> 0,
-                //			'kpa'		=> 1,
-                //			...
-                //		)
-                //	)
-                //	bKeepAlive	- [in] keep alive
-                //      sCkString       - [out] a string contains the full XT cookie
-                //	RETURN		- self::ERR_SUCCESS successfully, otherwise error id
-                //
-		if ( ! CLib::IsArrayWithKeys( $arrData, [ self::CKX, self::CKT ] ) )
+		if ( CLib::IsArrayWithKeys( $vData, [ self::CKX, self::CKT ] ) )
 		{
-			return self::ERR_PARAMETER;
-		}
-		if ( ! CLib::IsArrayWithKeys( $arrData[ self::CKX ] ) ||
-			! CLib::IsArrayWithKeys( $arrData[ self::CKT ] ) )
-		{
-			return self::ERR_PARAMETER;
-		}
-		if ( ! array_key_exists( self::CKX_MID, $arrData[ self::CKX ] ) ||
-			! array_key_exists( self::CKX_TYPE, $arrData[ self::CKX ] ) ||
-			! array_key_exists( self::CKX_STATUS, $arrData[ self::CKX ] ) ||
-			! array_key_exists( self::CKX_ACTION, $arrData[ self::CKX ] ) ||
-			! array_key_exists( self::CKT_LOGIN_TM, $arrData[ self::CKT ] ) ||
-			! array_key_exists( self::CKT_REFRESH_TM, $arrData[ self::CKT ] ) ||
-			! array_key_exists( self::CKT_UPDATE_TM, $arrData[ self::CKT ] ) )
-		{
-			return self::ERR_PARAMETER;
-		}
-
-		//	...
-		$nRet = self::ERR_UNKNOWN;
-
-		//
-		//      make signature and crc checksum
-		//
-		$arrData[ self::CKT ][ self::CKT_KP_ALIVE ]	= ( $bKeepAlive ? 1 : 0 );
-		$arrData[ self::CKT ][ self::CKT_VER ]		= self::COOKIE_VERSION;
-		$arrData[ self::CKT ][ self::CKT_CKS_SIGN ]	= $this->GetSignData( $arrData );
-		$arrData[ self::CKT ][ self::CKT_CKS_CRC ]	= $this->GetCRCData( $arrData );
-
-		//	...
-		$arrEncryptedCk = $this->_EncryptXTArray( $arrData );
-		if ( CLib::IsArrayWithKeys( $arrEncryptedCk, [ self::CKX, self::CKT ] ) )
-		{
-			if ( $this->_SetCookieForLogin( $arrEncryptedCk, $bKeepAlive, $sCkString ) )
-			{
-				$nRet = self::ERR_SUCCESS;
-			}
-			else
-			{
-				$nRet = self::ERR_SET_COOKIE;
-			}
+			return $this->_MakeLoginByData( $vData, $bKeepAlive, $sCkString );
 		}
 		else
 		{
-			$nRet = self::ERR_ENCRYPT_XT;
+			return $this->_MakeLoginByCookieString( $vData, $bKeepAlive );
 		}
-
-		//	...
-		return $nRet;
 	}
 	public function MakeLoginWithCookieString( $sCkString )
 	{
-		if ( ! CLib::IsExistingString( $sCkString ) )
-		{
-			return self::ERR_PARAMETER;
-		}
 
-		//	...
-		$nRet = self::ERR_UNKNOWN;
-
-		//	...
-		$arrEncryptedCk	= $this->GetEncryptedXTArray( $sCkString );
-		$nErrorId	= $this->_CheckEncryptedXTArray( $arrEncryptedCk );
-		if ( self::ERR_SUCCESS == $nErrorId )
-		{
-			$arrCookie = $this->_DecryptXTArray( $arrEncryptedCk );
-			if ( CLib::IsArrayWithKeys( $arrCookie, self::CKT ) &&
-				CLib::IsArrayWithKeys( $arrCookie[ self::CKT ], self::CKT_KP_ALIVE ) )
-			{
-				if ( self::ERR_SUCCESS == $this->ResetCookie( $sCkString ) )
-				{
-					$bKeepAlive = boolval( $this->_GetSafeVal( self::CKT_KP_ALIVE, $arrCookie[ self::CKT ], 0 ) );
-					if ( $this->_SetCookieForLogin( $arrEncryptedCk, $bKeepAlive ) )
-					{
-						$nRet = self::ERR_SUCCESS;
-					}
-					else
-					{
-						$nRet = self::ERR_SET_COOKIE;
-					}
-				}
-				else
-				{
-					$nRet = self::ERR_RESET_COOKIE;
-				}
-			}
-			else
-			{
-				$nRet = self::ERR_INVALID_XT_COOKIE;
-			}
-		}
-		else
-		{
-			$nRet = $nErrorId;
-		}
-
-		return $nRet;
 	}
 
 	//
@@ -593,6 +479,139 @@ class CUCClientPro
         ////////////////////////////////////////////////////////////////////////////////
         //	protected
         //
+
+	protected function _MakeLoginByData( $arrData, $bKeepAlive = false, & $sCkString = '' )
+	{
+		//
+		//	arrData		- [in] Array
+		//	(
+		//		'X'	=> Array
+		//		(
+		//			'mid'		=> '101101aaefe12342aaefe12342aaefe12342',
+		//			'nkn'		=> '',
+		//			't'		=> 0,
+		//			'imgid'		=> '',
+		//			'act'		=> 0,
+		//			'src'		=> '',
+		//			'digest'	=> '',
+		//		)
+		//		'T'	=> Array
+		//		(
+		//			'v'		=> '',
+		//			'ltm'		=> 0,
+		//			'rtm'		=> 0,
+		//			'utm'		=> 0,
+		//			'kpa'		=> 1,
+		//			...
+		//		)
+		//	)
+		//	bKeepAlive	- [in] keep alive
+		//      sCkString       - [out] a string contains the full XT cookie
+		//	RETURN		- self::ERR_SUCCESS successfully, otherwise error id
+		//
+		if ( ! CLib::IsArrayWithKeys( $arrData, [ self::CKX, self::CKT ] ) )
+		{
+			return self::ERR_PARAMETER;
+		}
+		if ( ! CLib::IsArrayWithKeys( $arrData[ self::CKX ] ) ||
+			! CLib::IsArrayWithKeys( $arrData[ self::CKT ] ) )
+		{
+			return self::ERR_PARAMETER;
+		}
+		if ( ! array_key_exists( self::CKX_MID, $arrData[ self::CKX ] ) ||
+			! array_key_exists( self::CKX_TYPE, $arrData[ self::CKX ] ) ||
+			! array_key_exists( self::CKX_STATUS, $arrData[ self::CKX ] ) ||
+			! array_key_exists( self::CKX_ACTION, $arrData[ self::CKX ] ) ||
+			! array_key_exists( self::CKT_LOGIN_TM, $arrData[ self::CKT ] ) ||
+			! array_key_exists( self::CKT_REFRESH_TM, $arrData[ self::CKT ] ) ||
+			! array_key_exists( self::CKT_UPDATE_TM, $arrData[ self::CKT ] ) )
+		{
+			return self::ERR_PARAMETER;
+		}
+
+		//	...
+		$nRet = self::ERR_UNKNOWN;
+
+		//
+		//      make signature and crc checksum
+		//
+		$arrData[ self::CKT ][ self::CKT_KP_ALIVE ]	= ( $bKeepAlive ? 1 : 0 );
+		$arrData[ self::CKT ][ self::CKT_VER ]		= self::COOKIE_VERSION;
+		$arrData[ self::CKT ][ self::CKT_CKS_SIGN ]	= $this->GetSignData( $arrData );
+		$arrData[ self::CKT ][ self::CKT_CKS_CRC ]	= $this->GetCRCData( $arrData );
+
+		//	...
+		$arrEncryptedCk = $this->_EncryptXTArray( $arrData );
+		if ( CLib::IsArrayWithKeys( $arrEncryptedCk, [ self::CKX, self::CKT ] ) )
+		{
+			if ( $this->_SetCookieForLogin( $arrEncryptedCk, $bKeepAlive, $sCkString ) )
+			{
+				$nRet = self::ERR_SUCCESS;
+			}
+			else
+			{
+				$nRet = self::ERR_SET_COOKIE;
+			}
+		}
+		else
+		{
+			$nRet = self::ERR_ENCRYPT_XT;
+		}
+
+		//	...
+		return $nRet;
+	}
+	protected function _MakeLoginByCookieString( $sCookieString, $bKeepAlive = false )
+	{
+		if ( ! CLib::IsExistingString( $sCookieString ) )
+		{
+			return self::ERR_PARAMETER;
+		}
+
+		//	...
+		$nRet = self::ERR_UNKNOWN;
+
+		//	...
+		$bKeepAlive	= boolval( $bKeepAlive );
+		$arrEncryptedCk	= $this->GetEncryptedXTArray( $sCookieString );
+		$nErrorId	= $this->_CheckEncryptedXTArray( $arrEncryptedCk );
+
+		if ( self::ERR_SUCCESS == $nErrorId )
+		{
+			$arrCookie = $this->_DecryptXTArray( $arrEncryptedCk );
+			if ( CLib::IsArrayWithKeys( $arrCookie, self::CKT ) &&
+				CLib::IsArrayWithKeys( $arrCookie[ self::CKT ], self::CKT_KP_ALIVE ) )
+			{
+				if ( self::ERR_SUCCESS == $this->ResetCookie( $sCookieString ) )
+				{
+					if ( $this->_SetCookieForLogin( $arrEncryptedCk, $bKeepAlive ) )
+					{
+						$nRet = self::ERR_SUCCESS;
+					}
+					else
+					{
+						$nRet = self::ERR_SET_COOKIE;
+					}
+				}
+				else
+				{
+					$nRet = self::ERR_RESET_COOKIE;
+				}
+			}
+			else
+			{
+				$nRet = self::ERR_INVALID_XT_COOKIE;
+			}
+		}
+		else
+		{
+			$nRet = $nErrorId;
+		}
+
+		return $nRet;
+	}
+
+
 	protected function _CheckCookieString( $sCkString )
 	{
 		if ( ! CLib::IsExistingString( $sCkString ) )
